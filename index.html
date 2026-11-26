@@ -53,7 +53,7 @@ body:not(.admin) .adm { display: none !important; }
 @keyframes sh { to { background-position: -200% 0; } }
 #toastBox > div { animation: tin .35s ease-out; }
 @keyframes tin { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .node, .grad-text { animation: none; } }
 </style>
 </head>
@@ -335,6 +335,7 @@ body:not(.admin) .adm { display: none !important; }
 </div>
 
 <button id="secretBtn" onclick="openAdmin()" aria-label="Admin" class="fixed bottom-2 left-2 z-[55] w-7 h-7 rounded-full text-[10px] text-slate-500 opacity-0 hover:opacity-40 focus:opacity-40 transition"><i class="fas fa-lock"></i></button>
+<div id="adminBar" class="adm fixed bottom-3 left-12 z-[56] flex items-center gap-2 pl-3 pr-1.5 py-1.5 rounded-full bg-slate-900/90 dark:bg-slate-700/90 backdrop-blur text-white text-xs font-semibold shadow-xl"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span><span>Mode admin</span><span id="barTimer" class="tabular-nums text-slate-300">10:00</span><button onclick="openAdmin()" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition">Panel</button><button onclick="endAdmin('Berhasil logout')" class="px-2.5 py-1 rounded-full bg-red-500/80 hover:bg-red-500 transition">Keluar</button></div>
 
 <div id="imageViewerModal" class="fixed inset-0 bg-black/90 z-[120] hidden flex-col items-center justify-center transition-opacity duration-300 opacity-0">
 <button onclick="closeViewer('imageViewerModal')" aria-label="Tutup" class="absolute top-6 right-6 text-white text-4xl hover:text-red-500 transition"><i class="fas fa-times"></i></button>
@@ -387,7 +388,8 @@ body:not(.admin) .adm { display: none !important; }
 </div>
 <div id="adminModal" class="bg-white dark:bg-darkcard w-full max-w-lg rounded-2xl p-6 hidden flex-col border border-slate-200 dark:border-slate-700 shadow-2xl max-h-[90vh] overflow-y-auto">
 <div class="flex items-center justify-between mb-1"><h3 class="text-2xl font-bold text-slate-900 dark:text-white">Panel Admin</h3><button onclick="closeModal()" aria-label="Tutup" class="text-slate-400 hover:text-red-500 text-2xl transition"><i class="fas fa-times"></i></button></div>
-<p class="text-sm text-slate-500 mb-5">Pilih yang mau ditambahkan. Semua tersimpan otomatis ke database dan langsung tampil di website.</p>
+<p class="text-sm text-slate-500 mb-3">Pilih yang mau ditambahkan. Semua tersimpan otomatis ke database dan langsung tampil di website.</p>
+<div class="flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-lg px-3 py-2 mb-5"><i class="fas fa-hourglass-half mt-0.5"></i><span>Sesi admin hanya berlaku untuk <b>satu aksi</b> (simpan / hapus) atau maksimal 10 menit. Sisa waktu: <b id="sessTimer" class="tabular-nums">10:00</b></span></div>
 <div class="grid grid-cols-2 gap-3">
 <button onclick="adm('project')" class="text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition bg-slate-50 dark:bg-darkbg"><i class="fas fa-diagram-project text-primary text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Tambah Project</span><span class="block text-xs text-slate-500 mt-0.5">Karya baru + link website</span></button>
 <button onclick="adm('cert')" class="text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition bg-slate-50 dark:bg-darkbg"><i class="fas fa-award text-primary text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Upload Sertifikat</span><span class="block text-xs text-slate-500 mt-0.5">Gambar JPG/PNG atau PDF</span></button>
@@ -396,7 +398,7 @@ body:not(.admin) .adm { display: none !important; }
 <button onclick="adm('cv')" class="text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition bg-slate-50 dark:bg-darkbg"><i class="fas fa-file-pdf text-primary text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Upload / Ganti CV</span><span class="block text-xs text-slate-500 mt-0.5">Bisa dilihat &amp; diunduh</span></button>
 <button onclick="adm('prof')" class="text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition bg-slate-50 dark:bg-darkbg"><i class="fas fa-user-circle text-primary text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Ganti Foto Profil</span><span class="block text-xs text-slate-500 mt-0.5">Foto di bagian utama</span></button>
 <button onclick="adm('link')" class="text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition bg-slate-50 dark:bg-darkbg"><i class="fas fa-link text-primary text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Link Website Saya</span><span class="block text-xs text-slate-500 mt-0.5">Perbarui tautan website</span></button>
-<button onclick="closeModal();adminToggle()" class="text-left p-4 rounded-xl border border-red-200 dark:border-red-900/40 hover:border-red-500 transition bg-red-50/50 dark:bg-red-900/10"><i class="fas fa-right-from-bracket text-red-500 text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Logout</span><span class="block text-xs text-slate-500 mt-0.5">Keluar dari mode admin</span></button>
+<button onclick="closeModal()" class="text-left p-4 rounded-xl border border-red-200 dark:border-red-900/40 hover:border-red-500 transition bg-red-50/50 dark:bg-red-900/10"><i class="fas fa-right-from-bracket text-red-500 text-xl mb-2 block"></i><span class="block font-semibold text-sm text-slate-900 dark:text-white">Logout</span><span class="block text-xs text-slate-500 mt-0.5">Keluar dari mode admin</span></button>
 </div>
 <p class="text-xs text-slate-500 mt-5"><span id="dbDot" class="inline-block w-2 h-2 rounded-full bg-slate-500 mr-1.5 align-middle"></span><span id="dbStatus">Menghubungkan database...</span></p>
 </div>
@@ -419,10 +421,11 @@ body:not(.admin) .adm { display: none !important; }
 <div class="flex justify-end gap-3"><button onclick="closeModal()" class="px-5 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">Batal</button><button onclick="saveLink()" class="px-5 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-blue-800 transition disabled:opacity-60">Simpan Link</button></div>
 </div>
 <div id="loginModal" class="bg-white dark:bg-darkcard w-full max-w-sm rounded-2xl p-6 hidden flex-col border border-slate-200 dark:border-slate-700 shadow-2xl">
-<h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Login Admin</h3>
-<input type="password" id="lPass" placeholder="Masukkan password admin" autocomplete="current-password" autofocus class="w-full p-3 mb-2 border rounded-lg bg-slate-50 dark:bg-darkbg dark:border-slate-700 text-slate-900 dark:text-white">
-<p id="lErr" class="text-sm text-red-500 mb-3 hidden">Password salah.</p>
+<div class="flex items-center gap-3 mb-5"><span class="w-11 h-11 shrink-0 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg"><i class="fas fa-shield-halved"></i></span><div><h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">Login Admin</h3><p class="text-xs text-slate-500">Area terbatas. Setiap sesi hanya untuk satu aksi.</p></div></div>
+<div class="relative mb-2"><input type="password" id="lPass" placeholder="Masukkan password admin" autocomplete="current-password" autofocus class="w-full p-3 pr-11 border rounded-lg bg-slate-50 dark:bg-darkbg dark:border-slate-700 text-slate-900 dark:text-white"><button type="button" id="lEye" onclick="togglePw()" aria-label="Tampilkan / sembunyikan password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition"><i class="fas fa-eye"></i></button></div>
+<p id="lErr" class="text-sm text-red-500 mb-3 hidden leading-snug">Password salah.</p>
 <div class="flex justify-end gap-3 mt-2"><button onclick="closeModal()" class="px-5 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">Batal</button><button id="btnLogin" onclick="doLogin()" class="px-5 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-blue-800 transition disabled:opacity-60">Masuk</button></div>
+<p class="text-[11px] text-slate-400 mt-4 flex items-start gap-1.5"><i class="fas fa-lock mt-0.5"></i><span>Password diubah menjadi kode SHA-256 di perangkatmu. Teks aslinya tidak pernah dikirim ke database.</span></p>
 </div>
 </div>
 
@@ -596,8 +599,8 @@ const p = document.getElementById(id);
 if (open) { p.classList.remove('hidden'); p.classList.add('flex'); document.body.style.overflow = 'hidden'; setTimeout(() => p.classList.remove('translate-y-full'), 10); }
 else { p.classList.add('translate-y-full'); document.body.style.overflow = ''; setTimeout(() => { p.classList.add('hidden'); p.classList.remove('flex'); }, 500); }
 }
-const openAddProjectPage = () => slidePage('addProjectPage', true), closeAddProjectPage = () => slidePage('addProjectPage', false);
-const openAddCertPage = () => slidePage('addCertPage', true), closeAddCertPage = () => slidePage('addCertPage', false);
+const openAddProjectPage = () => slidePage('addProjectPage', true), closeAddProjectPage = () => { slidePage('addProjectPage', false); window.endAdmin && window.endAdmin('Sesi admin ditutup.'); };
+const openAddCertPage = () => slidePage('addCertPage', true), closeAddCertPage = () => { slidePage('addCertPage', false); window.endAdmin && window.endAdmin('Sesi admin ditutup.'); };
 
 // ================== MODAL ==================
 const modalBackdrop = document.getElementById('modalBackdrop');
@@ -607,7 +610,7 @@ modalBackdrop.classList.remove('hidden');
 modals.forEach(m => { document.getElementById(m).classList.add('hidden'); document.getElementById(m).classList.remove('flex'); });
 document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex');
 }
-function closeModal() { modalBackdrop.classList.add('hidden'); }
+function closeModal(keepSession) { modalBackdrop.classList.add('hidden'); if (keepSession !== true && window.isAdmin && window.endAdmin) window.endAdmin('Sesi admin ditutup.'); }
 modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
 
 // ================== UTIL ==================
@@ -728,8 +731,9 @@ async function sha256(text) {
 }
 
 // ================== CV, FOTO PROFIL, LINK WEBSITE, PANEL ADMIN ==================
+function togglePw() { const i = document.getElementById('lPass'), ic = document.querySelector('#lEye i'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; ic.className = 'fas ' + (show ? 'fa-eye-slash' : 'fa-eye'); i.focus(); }
 function adm(k) {
-closeModal();
+closeModal(true);
 ({ project: openAddProjectPage, cert: openAddCertPage, gal: () => openModal('galModal'), exp: () => openModal('expModal'), cv: () => openModal('cvModal'), prof: () => openModal('profModal'), link: () => { const a = document.querySelector('[data-site-link]'); document.getElementById('linkSite').value = a ? a.href : ''; openModal('linkModal'); } })[k]();
 }
 function applySetting(id, d) {
@@ -770,7 +774,7 @@ document.addEventListener('keydown', e => { if (e.ctrlKey && e.shiftKey && e.key
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { initializeAuth, inMemoryPersistence, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_r4Jc52yuru0CmcnBUV4Lat2SCIau2L0",
@@ -780,7 +784,7 @@ const firebaseConfig = {
   messagingSenderId: "354059988539",
   appId: "1:354059988539:web:5fb1c73259082310bc361e"
 };
-const app = initializeApp(firebaseConfig), db = getFirestore(app), auth = getAuth(app);
+const app = initializeApp(firebaseConfig), db = getFirestore(app), auth = initializeAuth(app, { persistence: inMemoryPersistence }); // sesi login tidak disimpan di browser
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const safe = u => /^https?:\/\//i.test(u || '') ? u : '';
@@ -812,11 +816,11 @@ if (k === 'certificates') c.insertBefore(document.createRange().createContextual
 else c.insertAdjacentHTML('beforeend', h);
 window.updateStats && window.updateStats();
 }
-window.DBsave = async (k, d) => { const r = await addDoc(collection(db, k), { ...d, createdAt: serverTimestamp() }); put(k, d, r.id); };
-window.DBdel = (k, id) => deleteDoc(doc(db, k, id));
+window.DBsave = async (k, d) => { const r = await addDoc(collection(db, k), { ...d, createdAt: serverTimestamp() }); put(k, d, r.id); window.endAdmin('Tersimpan. Sesi admin ditutup, login lagi untuk aksi berikutnya.'); };
+window.DBdel = (k, id) => deleteDoc(doc(db, k, id)).then(() => window.endAdmin('Sesi admin ditutup, login lagi untuk aksi berikutnya.'));
 // Pengaturan situs (CV, foto profil, link website) disimpan di koleksi "settings"
-window.DBset = (id, d) => setDoc(doc(db, 'settings', id), { ...d, updatedAt: serverTimestamp() });
-window.DBdelSetting = id => deleteDoc(doc(db, 'settings', id));
+window.DBset = (id, d) => setDoc(doc(db, 'settings', id), { ...d, updatedAt: serverTimestamp() }).then(() => window.endAdmin('Tersimpan. Sesi admin ditutup, login lagi untuk aksi berikutnya.'));
+window.DBdelSetting = id => deleteDoc(doc(db, 'settings', id)).then(() => window.endAdmin('Sesi admin ditutup, login lagi untuk aksi berikutnya.'));
 
 // Status koneksi database (tampil di Panel Admin)
 const dot = document.getElementById('dbDot'), st = document.getElementById('dbStatus');
@@ -836,41 +840,73 @@ Promise.allSettled(loads).then(() => { window.dbReady = true; window.updateStats
 // Login admin hanya dengan password.
 // Password di-hash SHA-256 di browser, lalu dicocokkan oleh Firestore Rules dengan hash di dokumen config/admin
 // (dokumen itu tidak bisa dibaca dari website, jadi hash aslinya tidak bocor).
+// Sesi admin TIDAK disimpan: refresh halaman = harus login lagi. Satu sesi hanya berlaku untuk SATU aksi
+// (simpan / hapus), atau maksimal 10 menit, lalu otomatis ditutup.
+const SESSION_MS = 10 * 60 * 1000, MAX_FAILS = 5, LOCK_MS = 60 * 1000;
 window.isAdmin = false;
-let loggingIn = false;
-function setAdmin(v) { window.isAdmin = v; document.body.classList.toggle('admin', v); }
-onAuthStateChanged(auth, u => {
-if (loggingIn) return;
-if (!u) return setAdmin(false);
-getDoc(doc(db, 'sessions', u.uid)).then(s => setAdmin(s.exists())).catch(() => setAdmin(false));
+let sessionTimer = null, tickTimer = null, sessionEnd = 0, fails = 0, lockUntil = 0, ending = Promise.resolve();
+const mmss = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+function tick() { const t = mmss(sessionEnd - Date.now()); ['sessTimer', 'barTimer'].forEach(i => { const e = document.getElementById(i); if (e) e.textContent = t; }); }
+function setAdmin(v) {
+window.isAdmin = v; document.body.classList.toggle('admin', v);
+clearTimeout(sessionTimer); clearInterval(tickTimer);
+if (v) { sessionEnd = Date.now() + SESSION_MS; tick(); tickTimer = setInterval(tick, 1000); sessionTimer = setTimeout(() => window.endAdmin('Sesi admin berakhir (10 menit). Login lagi untuk melanjutkan.'), SESSION_MS); }
+}
+// Mengakhiri sesi: hapus dokumen sesi di Firestore, lalu keluar dari Firebase Auth
+window.endAdmin = msg => {
+if (!window.isAdmin && !auth.currentUser) return ending;
+const u = auth.currentUser, was = window.isAdmin;
+setAdmin(false);
+if (msg && was) toast(msg);
+ending = ending.then(async () => {
+try { if (u) await deleteDoc(doc(db, 'sessions', u.uid)); } catch (e) {}
+try { await signOut(auth); } catch (e) {}
 });
+return ending;
+};
+window.addEventListener('pagehide', () => { if (window.isAdmin) window.endAdmin(); });
+
 const loginMsg = m => { const e = document.getElementById('lErr'); e.textContent = m; e.classList.remove('hidden'); };
 window.adminToggle = async () => {
-if (window.isAdmin) {
-try { await deleteDoc(doc(db, 'sessions', auth.currentUser.uid)); } catch (e) {}
-await signOut(auth); setAdmin(false); toast('Berhasil logout');
-} else { document.getElementById('lErr').classList.add('hidden'); document.getElementById('lPass').value = ''; openModal('loginModal'); setTimeout(() => document.getElementById('lPass').focus(), 50); }
+if (window.isAdmin) { await window.endAdmin('Berhasil logout'); }
+else {
+document.getElementById('lErr').classList.add('hidden');
+const p = document.getElementById('lPass'); p.value = ''; p.type = 'password';
+document.querySelector('#lEye i').className = 'fas fa-eye';
+openModal('loginModal'); setTimeout(() => p.focus(), 50);
+}
 };
 // Dibuka lewat tombol kecil tersembunyi di pojok kiri bawah, atau Ctrl+Shift+A
 window.openAdmin = () => { if (window.isAdmin) openModal('adminModal'); else window.adminToggle(); };
 window.doLogin = async () => {
+const wait = lockUntil - Date.now();
+if (wait > 0) return loginMsg('Terlalu banyak percobaan. Coba lagi dalam ' + Math.ceil(wait / 1000) + ' detik.');
 const pw = document.getElementById('lPass').value;
 if (!pw) return loginMsg('Masukkan password dulu.');
 const btn = document.getElementById('btnLogin');
-btn.disabled = true; loggingIn = true;
+btn.disabled = true;
 try {
+await ending;
 const hash = await sha256(pw);
 if (!auth.currentUser) await signInAnonymously(auth);
 await setDoc(doc(db, 'sessions', auth.currentUser.uid), { hash, at: serverTimestamp() });
-document.getElementById('lPass').value = '';
-setAdmin(true); toast('Login admin berhasil'); openModal('adminModal');
+fails = 0; document.getElementById('lPass').value = '';
+setAdmin(true); toast('Login admin berhasil. Sesi berlaku untuk satu aksi.'); openModal('adminModal');
 } catch (e) {
 console.warn('Login', e.code || e);
+const code = e.code || '';
 try { await signOut(auth); } catch (x) {}
-if (e.code === 'auth/operation-not-allowed' || e.code === 'auth/admin-restricted-operation') loginMsg('Aktifkan metode "Anonymous" di Firebase Authentication dulu.');
-else if (e.code === 'permission-denied') loginMsg('Password salah (atau dokumen config/admin belum dibuat di Firestore).');
-else loginMsg('Login gagal: ' + (e.code || e.message));
-} finally { btn.disabled = false; loggingIn = false; }
+if (code === 'permission-denied') {
+fails++;
+if (fails >= MAX_FAILS) { fails = 0; lockUntil = Date.now() + LOCK_MS; loginMsg('Password salah ' + MAX_FAILS + ' kali. Login dikunci 60 detik.'); }
+else loginMsg('Password salah (atau dokumen config/admin belum dibuat di Firestore). Sisa percobaan: ' + (MAX_FAILS - fails) + '.');
+}
+else if (code === 'auth/configuration-not-found') loginMsg('Firebase Authentication belum aktif di project ini. Di Firebase Console buka Authentication, klik "Get started", lalu di tab Sign-in method aktifkan "Anonymous" dan Save. Ini pengaturan di Firebase, bukan salah password.');
+else if (code === 'auth/operation-not-allowed' || code === 'auth/admin-restricted-operation') loginMsg('Metode "Anonymous" belum diaktifkan. Buka Firebase Console, Authentication, Sign-in method, aktifkan Anonymous, lalu Save.');
+else if (code === 'auth/network-request-failed') loginMsg('Tidak ada koneksi internet. Coba lagi.');
+else if (code === 'auth/too-many-requests') loginMsg('Terlalu banyak percobaan dari perangkat ini. Tunggu beberapa menit lalu coba lagi.');
+else loginMsg('Login gagal: ' + (code || e.message));
+} finally { btn.disabled = false; }
 };
 document.getElementById('lPass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
 window.updateStats = updateStats;
